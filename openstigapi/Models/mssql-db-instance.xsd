@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="CHECKLIST" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="CHECKLIST" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="ASSET">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ROLE" type="xs:string" minOccurs="0" />
+              <xs:element name="ASSET_TYPE" type="xs:string" minOccurs="0" />
+              <xs:element name="HOST_NAME" type="xs:string" minOccurs="0" />
+              <xs:element name="HOST_IP" type="xs:string" minOccurs="0" />
+              <xs:element name="HOST_MAC" type="xs:string" minOccurs="0" />
+              <xs:element name="HOST_FQDN" type="xs:string" minOccurs="0" />
+              <xs:element name="TECH_AREA" type="xs:string" minOccurs="0" />
+              <xs:element name="TARGET_KEY" type="xs:string" minOccurs="0" />
+              <xs:element name="WEB_OR_DATABASE" type="xs:string" minOccurs="0" />
+              <xs:element name="WEB_DB_SITE" type="xs:string" minOccurs="0" />
+              <xs:element name="WEB_DB_INSTANCE" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="STIGS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="iSTIG" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="STIG_INFO" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="SI_DATA" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="SID_NAME" type="xs:string" minOccurs="0" />
+                                <xs:element name="SID_DATA" type="xs:string" minOccurs="0" />
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="VULN" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="STATUS" type="xs:string" minOccurs="0" />
+                          <xs:element name="FINDING_DETAILS" type="xs:string" minOccurs="0" />
+                          <xs:element name="COMMENTS" type="xs:string" minOccurs="0" />
+                          <xs:element name="SEVERITY_OVERRIDE" type="xs:string" minOccurs="0" />
+                          <xs:element name="SEVERITY_JUSTIFICATION" type="xs:string" minOccurs="0" />
+                          <xs:element name="STIG_DATA" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="VULN_ATTRIBUTE" type="xs:string" minOccurs="0" />
+                                <xs:element name="ATTRIBUTE_DATA" type="xs:string" minOccurs="0" />
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
