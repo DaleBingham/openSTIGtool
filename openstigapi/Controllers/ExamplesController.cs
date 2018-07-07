@@ -23,6 +23,8 @@ namespace openstigapi.Controllers
             // open the web path/examples/ckl file
             string filename = Directory.GetCurrentDirectory() + "\\examples\\asd-example.xml";
             string checklistXML = string.Empty;
+            string returnedXML = string.Empty;
+
             CHECKLIST asdChecklist = new CHECKLIST();
 
             // put that into a class and deserialize that
@@ -34,7 +36,16 @@ namespace openstigapi.Controllers
             asdChecklist = (CHECKLIST)serializer.Deserialize(reader);
             reader.Close();
             // serialize into a string to return
-            return checklistXML;
+            using(var sww = new StringWriter())
+            {
+                using(XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, asdChecklist);
+                    returnedXML = sww.ToString(); // Your XML
+                }
+            }
+
+            return returnedXML;
         }
 
         // GET api/values/5
