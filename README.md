@@ -1,5 +1,7 @@
 # openSTIGtool
-This is an open source tool to read, modify, view, and report on STIGs from DISA. The checklist files are just XML files and the viewer is horrible. 
+This is an open source tool to read, modify, view, and report on STIGs from DISA. The checklist files are just XML files and the viewer is horrible. This started with STIG version 4.6 and the STIG Viewer 2.7.1 technology. I make no representation on earlier ones as you have to have the latest. From here on out, we will use this as the base version of the ASD STIG.
+
+Other STIGs will be available as time permits (i.e. database server, database instance, windows server, linux, etc.)
 
 ## Functions of this tool
 

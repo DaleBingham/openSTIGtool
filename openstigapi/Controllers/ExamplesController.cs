@@ -16,12 +16,14 @@ namespace openstigapi.Controllers
     [Route("api/[controller]")]
     public class ExamplesController : Controller
     {
+        const string exampleSTIG = "\\examples\\asd-example.ckl";
+
         // GET api/values
         [HttpGet]
         public string Get()
         {
             // open the web path/examples/ckl file
-            string filename = Directory.GetCurrentDirectory() + "\\examples\\asd-example.xml";
+            string filename = Directory.GetCurrentDirectory() + exampleSTIG;
             string checklistXML = string.Empty;
             string returnedXML = string.Empty;
 
