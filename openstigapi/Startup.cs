@@ -24,6 +24,8 @@ namespace openstigapi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            // add this in memory for now. Persist later.
+        	services.AddDistributedMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -12,12 +12,10 @@ using System.Xml.Serialization;
 using System.Xml;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace openstigapi.Controllers
 {
@@ -25,6 +23,16 @@ namespace openstigapi.Controllers
     public class ScoreController : Controller
     {
         const string exampleSTIG = "\\examples\\asd-example.ckl";
+
+	    private readonly IDistributedCache  _cache;
+ 
+		// _distributedCache.GetString(cacheKey);
+		// _distributedCache.SetString(cacheKey, existingTime);
+        
+        public ScoreController(IDistributedCache  cache)
+        {
+            _cache = cache;
+        }
 
         // GET api/values
         [HttpGet]
