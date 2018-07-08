@@ -10,26 +10,29 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System.Xml.Serialization;
 using System.Xml;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace openstigapi.Controllers
 {
     [Route("api/[controller]")]
     public class ScoreController : Controller
     {
-            private int notReviewed = 0; 
-            private int notApplicable = 0;
-            private int open = 0;
-            private int notAFinding = 0;
-
         const string exampleSTIG = "\\examples\\asd-example.ckl";
 
         // GET api/values
         [HttpGet]
-        public string Get()
+        public async Task<IActionResult> Get()
         {
             // open the web path/examples/ckl file
             string filename = Directory.GetCurrentDirectory() + exampleSTIG;
-            string returnedXML = string.Empty;
+            Score cklScore = new Score();
 
             CHECKLIST asdChecklist = new CHECKLIST();
 
@@ -37,7 +40,7 @@ namespace openstigapi.Controllers
             StreamReader reader = new StreamReader(filename);
             asdChecklist = (CHECKLIST)serializer.Deserialize(reader);
             reader.Close();
-            //notReviewed = asdChecklist.Items[1]
+            
             // now see what score you can get
             if (asdChecklist.Items.Length == 2 && asdChecklist.Items[1] != null) {
                 CHECKLISTSTIGS objSTIG = (CHECKLISTSTIGS)asdChecklist.Items[1];
@@ -46,19 +49,14 @@ namespace openstigapi.Controllers
                     CHECKLISTSTIGSISTIG asdSTIG = (CHECKLISTSTIGSISTIG)iSTIG[0];
                     if (asdSTIG.VULN != null && asdSTIG.VULN.Length > 0){
                         CHECKLISTSTIGSISTIGVULN[] asdVulnerabilities = asdSTIG.VULN;
-                        notReviewed = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_reviewed").Count();
-                        returnedXML += "Not Reviewed Count: " + notReviewed.ToString() + "<br />";
-                        notApplicable = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_applicable").Count();
-                        returnedXML += "Not Applicable Count: " + notApplicable.ToString() + "<br />";
-                        open = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "open").Count();
-                        returnedXML += "Open Count: " + open.ToString() + "<br />";
-                        notAFinding = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "notafinding").Count();
-                        returnedXML += "Not a Finding Count: " + notAFinding.ToString() + "<br />";
+                        cklScore.NotReviewed = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_reviewed").Count();
+                        cklScore.NotApplicable = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_applicable").Count();
+                        cklScore.Open = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "open").Count();
+                        cklScore.NotAFinding = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "notafinding").Count();
                     }
                 }
-
             }
-            return returnedXML;
+            return Json(cklScore);
         }
 
         // GET api/values/5
