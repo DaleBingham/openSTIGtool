@@ -17,14 +17,14 @@ namespace openstigweb.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "openSTIG Tool";
 
             return View();
         }
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "For now just email me. As this grows we will get a slack channel and do it right!";
 
             return View();
         }
