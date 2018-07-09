@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using openstigapi.Classes;
 using openstigapi.Models;
 using System.IO;
 using System.Text;
@@ -30,13 +31,9 @@ namespace openstigapi.Controllers
             CHECKLIST asdChecklist = new CHECKLIST();
 
             // put that into a class and deserialize that
-            if (System.IO.File.Exists(filename)) {
-                 checklistXML = System.IO.File.ReadAllText(filename);
-            }
+            asdChecklist = ChecklistLoader.LoadASDChecklist(filename);
             XmlSerializer serializer = new XmlSerializer(typeof(CHECKLIST));
-            StreamReader reader = new StreamReader(filename);
-            asdChecklist = (CHECKLIST)serializer.Deserialize(reader);
-            reader.Close();
+
             // serialize into a string to return
             using(var sww = new StringWriter())
             {

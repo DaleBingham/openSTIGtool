@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using openstigapi.Classes;
 using openstigapi.Models;
 using System.IO;
 using System.Text;
@@ -35,44 +36,38 @@ namespace openstigapi.Controllers
         }
 
         // GET api/values
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
         {
-            // open the web path/examples/ckl file
-            string filename = Directory.GetCurrentDirectory() + exampleSTIG;
             Score cklScore = new Score();
-
-            CHECKLIST asdChecklist = new CHECKLIST();
-
-            XmlSerializer serializer = new XmlSerializer(typeof(CHECKLIST));
-            StreamReader reader = new StreamReader(filename);
-            asdChecklist = (CHECKLIST)serializer.Deserialize(reader);
-            reader.Close();
-            
-            // now see what score you can get
-            if (asdChecklist.Items.Length == 2 && asdChecklist.Items[1] != null) {
-                CHECKLISTSTIGS objSTIG = (CHECKLISTSTIGS)asdChecklist.Items[1];
-                CHECKLISTSTIGSISTIG[] iSTIG = objSTIG.iSTIG;
-                if (iSTIG.Length == 1 && iSTIG[0] != null){
-                    CHECKLISTSTIGSISTIG asdSTIG = (CHECKLISTSTIGSISTIG)iSTIG[0];
-                    if (asdSTIG.VULN != null && asdSTIG.VULN.Length > 0){
-                        CHECKLISTSTIGSISTIGVULN[] asdVulnerabilities = asdSTIG.VULN;
-                        cklScore.NotReviewed = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_reviewed").Count();
-                        cklScore.NotApplicable = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_applicable").Count();
-                        cklScore.Open = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "open").Count();
-                        cklScore.NotAFinding = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "notafinding").Count();
+            string checklist = await _cache.GetStringAsync(id.ToString());
+            if (!string.IsNullOrEmpty(checklist)) {
+                Checklist asdSTIGChecklist = JsonConvert.DeserializeObject<Checklist>(checklist);
+                if (asdSTIGChecklist.STIGChecklist == null || asdSTIGChecklist.STIGChecklist.Items == null){
+                    // load the checklist
+                    asdSTIGChecklist.STIGChecklist = ChecklistLoader.LoadASDChecklist(Directory.GetCurrentDirectory() + 
+                        "\\wwwroot\\data" + asdSTIGChecklist.filePath);
+                        // save it to the cache for next time           
+                    _cache.SetString(asdSTIGChecklist.id.ToString(),JsonConvert.SerializeObject(asdSTIGChecklist));
+                }
+                if (asdSTIGChecklist != null && asdSTIGChecklist.STIGChecklist.Items != null && 
+                    asdSTIGChecklist.STIGChecklist.Items.Length == 2 && asdSTIGChecklist.STIGChecklist.Items[1] != null) {
+                    // now see what score you can get
+                    CHECKLISTSTIGS objSTIG = (CHECKLISTSTIGS)asdSTIGChecklist.STIGChecklist.Items[1];
+                    CHECKLISTSTIGSISTIG[] iSTIG = objSTIG.iSTIG;
+                    if (iSTIG.Length == 1 && iSTIG[0] != null){
+                        CHECKLISTSTIGSISTIG asdSTIG = (CHECKLISTSTIGSISTIG)iSTIG[0];
+                        if (asdSTIG.VULN != null && asdSTIG.VULN.Length > 0){
+                            CHECKLISTSTIGSISTIGVULN[] asdVulnerabilities = asdSTIG.VULN;
+                            cklScore.NotReviewed = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_reviewed").Count();
+                            cklScore.NotApplicable = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "not_applicable").Count();
+                            cklScore.Open = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "open").Count();
+                            cklScore.NotAFinding = asdVulnerabilities.Where(x => x.STATUS.ToLower() == "notafinding").Count();
+                        }
                     }
                 }
             }
             return Json(cklScore);
         }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
     }
 }

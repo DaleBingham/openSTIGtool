@@ -23,10 +23,7 @@ namespace openstigapi.Controllers
     public class ChecklistController : Controller
     {
 	    private readonly IDistributedCache _cache;
- 
-		// _cache.GetString(cacheKey);
-		// _cache.SetString(cacheKey, existingTime);
-        
+         
         public ChecklistController(IDistributedCache cache)
         {
             _cache = cache;
@@ -47,7 +44,7 @@ namespace openstigapi.Controllers
 
         // GET api/checklist/33434343-3333-3333-3333-919191919191
         [HttpGet("{id}")]
-        public async Task<IActionResult>  Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var checklist = await _cache.GetStringAsync(id.ToString());
             return Json(checklist);
@@ -69,7 +66,7 @@ namespace openstigapi.Controllers
             if (string.IsNullOrEmpty(_cache.GetString("dbfbf6a2-929a-4c13-ab00-d5266107b9f2"))){
                 Checklist initial = new Checklist();
                 initial.created = DateTime.Now;
-                initial.filePath = "\\dbfbf6a2-929a-4c13-ab00-d5266107b9f2\\asd-real-world-ckl";
+                initial.filePath = "\\dbfbf6a2-929a-4c13-ab00-d5266107b9f2\\asd-real-world.ckl";
                 initial.id = Guid.Parse("dbfbf6a2-929a-4c13-ab00-d5266107b9f2");
                 initial.title = "Initial example ASD STIG Checklist";
                 initial.type = STIGtype.ASD;

@@ -7,7 +7,7 @@ Other STIGs will be available as time permits (i.e. database server, database in
 
 Some of the things this tool will (eventually) do are listed below:
 
-* read in checklist files
+* [x] read in checklist files
 * write out checklist files
 * online wizard to ask questions and mark N/A for those that don't apply by default (i.e. not a web app so no cookies)
 * reporting on metrics for CAT 1, 2, 3 items and percentage of completion
