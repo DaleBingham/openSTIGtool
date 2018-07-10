@@ -42,18 +42,18 @@ namespace openstigapi.Controllers
             Score cklScore = new Score();
             string checklist = await _cache.GetStringAsync(id.ToString());
             if (!string.IsNullOrEmpty(checklist)) {
-                Checklist asdSTIGChecklist = JsonConvert.DeserializeObject<Checklist>(checklist);
-                if (asdSTIGChecklist.STIGChecklist == null || asdSTIGChecklist.STIGChecklist.Items == null){
+                Artifact asdSTIGChecklist = JsonConvert.DeserializeObject<Artifact>(checklist);
+                if (asdSTIGChecklist.Checklist == null || asdSTIGChecklist.Checklist.Items == null){
                     // load the checklist
-                    asdSTIGChecklist.STIGChecklist = ChecklistLoader.LoadASDChecklist(Directory.GetCurrentDirectory() + 
+                    asdSTIGChecklist.Checklist = ChecklistLoader.LoadASDChecklist(Directory.GetCurrentDirectory() + 
                         "\\wwwroot\\data" + asdSTIGChecklist.filePath);
                         // save it to the cache for next time           
                     _cache.SetString(asdSTIGChecklist.id.ToString(),JsonConvert.SerializeObject(asdSTIGChecklist));
                 }
-                if (asdSTIGChecklist != null && asdSTIGChecklist.STIGChecklist.Items != null && 
-                    asdSTIGChecklist.STIGChecklist.Items.Length == 2 && asdSTIGChecklist.STIGChecklist.Items[1] != null) {
+                if (asdSTIGChecklist != null && asdSTIGChecklist.Checklist.Items != null && 
+                    asdSTIGChecklist.Checklist.Items.Length == 2 && asdSTIGChecklist.Checklist.Items[1] != null) {
                     // now see what score you can get
-                    CHECKLISTSTIGS objSTIG = (CHECKLISTSTIGS)asdSTIGChecklist.STIGChecklist.Items[1];
+                    CHECKLISTSTIGS objSTIG = (CHECKLISTSTIGS)asdSTIGChecklist.Checklist.Items[1];
                     CHECKLISTSTIGSISTIG[] iSTIG = objSTIG.iSTIG;
                     if (iSTIG.Length == 1 && iSTIG[0] != null){
                         CHECKLISTSTIGSISTIG asdSTIG = (CHECKLISTSTIGSISTIG)iSTIG[0];

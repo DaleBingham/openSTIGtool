@@ -34,10 +34,10 @@ namespace openstigapi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Checklist> listing = new List<Checklist>();
+            List<Artifact> listing = new List<Artifact>();
             string lstChecklist = await _cache.GetStringAsync("stigListing");
             if (!string.IsNullOrEmpty(lstChecklist)) {
-                listing = JsonConvert.DeserializeObject<List<Checklist>>(lstChecklist);
+                listing = JsonConvert.DeserializeObject<List<Artifact>>(lstChecklist);
             }
             return Json(listing);
         }
@@ -54,7 +54,7 @@ namespace openstigapi.Controllers
         /// POST api/checklist/
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]Checklist value)
+        public async Task<IActionResult> Post([FromBody]Artifact value)
         {
             value.id = Guid.NewGuid();
             await _cache.SetStringAsync(value.id.ToString(),JsonConvert.SerializeObject(value));
@@ -64,7 +64,7 @@ namespace openstigapi.Controllers
         private void LoadInitialChecklist()
         {
             if (string.IsNullOrEmpty(_cache.GetString("dbfbf6a2-929a-4c13-ab00-d5266107b9f2"))){
-                Checklist initial = new Checklist();
+                Artifact initial = new Artifact();
                 initial.created = DateTime.Now;
                 initial.filePath = "\\dbfbf6a2-929a-4c13-ab00-d5266107b9f2\\asd-real-world.ckl";
                 initial.id = Guid.Parse("dbfbf6a2-929a-4c13-ab00-d5266107b9f2");
@@ -72,7 +72,7 @@ namespace openstigapi.Controllers
                 initial.type = STIGtype.ASD;
 
                 _cache.SetString(initial.id.ToString(),JsonConvert.SerializeObject(initial));
-                List<Checklist> listing = new List<Checklist>();
+                List<Artifact> listing = new List<Artifact>();
                 listing.Add(initial);
                 _cache.SetString("stigListing",JsonConvert.SerializeObject(listing));
             }
