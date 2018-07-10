@@ -9,5 +9,6 @@ namespace openstigapi.Models
         public int NotReviewed { get; set;}
         public int Open { get; set; }
         public int NotAFinding { get; set; }
+        public int total { get { return NotAFinding + NotApplicable + NotReviewed + Open; }}
     }
 }
