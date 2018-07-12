@@ -8,7 +8,9 @@ Other STIGs will be available as time permits (i.e. database server, database in
 Some of the things this tool will (eventually) do are listed below:
 
 * [x] read in checklist files
+* [x] score checklists by # of items per status
 * write out checklist files
+* categorize STIGs by subject matter for easier viewing
 * online wizard to ask questions and mark N/A for those that don't apply by default (i.e. not a web app so no cookies)
 * reporting on metrics for CAT 1, 2, 3 items and percentage of completion
 * simple Dockerfile or Buildah script to create a quick image to run
