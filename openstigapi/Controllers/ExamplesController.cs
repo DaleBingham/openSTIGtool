@@ -11,13 +11,20 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System.Xml.Serialization;
 using System.Xml;
+using Microsoft.Extensions.Logging;
 
 namespace openstigapi.Controllers
 {
     [Route("api/[controller]")]
     public class ExamplesController : Controller
     {
-        const string exampleSTIG = "\\examples\\asd-example.ckl";
+        const string exampleSTIG = "/examples/asd-example.ckl";
+        private readonly ILogger<ExamplesController> _logger;
+
+        public ExamplesController(ILogger<ExamplesController> logger)
+        {
+            _logger = logger;
+        }
 
         // GET api/values
         [HttpGet]
@@ -27,31 +34,29 @@ namespace openstigapi.Controllers
             string filename = Directory.GetCurrentDirectory() + exampleSTIG;
             string checklistXML = string.Empty;
             string returnedXML = string.Empty;
+            
+            if (System.IO.File.Exists(filename)) {
+                CHECKLIST asdChecklist = new CHECKLIST();
+                _logger.LogInformation("/example/: Example file active so returning an example ASD STIG.");
 
-            CHECKLIST asdChecklist = new CHECKLIST();
+                // put that into a class and deserialize that
+                asdChecklist = ChecklistLoader.LoadASDChecklist(filename);
+                XmlSerializer serializer = new XmlSerializer(typeof(CHECKLIST));
+                _logger.LogInformation("Serialized ASD example checklist");
 
-            // put that into a class and deserialize that
-            asdChecklist = ChecklistLoader.LoadASDChecklist(filename);
-            XmlSerializer serializer = new XmlSerializer(typeof(CHECKLIST));
-
-            // serialize into a string to return
-            using(var sww = new StringWriter())
-            {
-                using(XmlWriter writer = XmlWriter.Create(sww))
+                // serialize into a string to return
+                using(var sww = new StringWriter())
                 {
-                    serializer.Serialize(writer, asdChecklist);
-                    returnedXML = sww.ToString(); // Your XML
+                    using(XmlWriter writer = XmlWriter.Create(sww))
+                    {
+                        serializer.Serialize(writer, asdChecklist);
+                        _logger.LogInformation("/example/: Returning XML string of ASD example checklist");
+                        returnedXML = sww.ToString(); // Your XML
+                    }
                 }
             }
 
             return returnedXML;
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
     }

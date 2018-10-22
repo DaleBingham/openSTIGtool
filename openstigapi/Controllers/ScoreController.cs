@@ -17,22 +17,23 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 
 namespace openstigapi.Controllers
 {
     [Route("api/[controller]")]
     public class ScoreController : Controller
     {
-        const string exampleSTIG = "\\examples\\asd-example.ckl";
-
 	    private readonly IDistributedCache  _cache;
  
 		// _distributedCache.GetString(cacheKey);
 		// _distributedCache.SetString(cacheKey, existingTime);
-        
-        public ScoreController(IDistributedCache  cache)
+        private readonly ILogger<ExamplesController> _logger;
+
+        public ScoreController(IDistributedCache cache, ILogger<ExamplesController> logger)
         {
             _cache = cache;
+            _logger = logger;
         }
 
         // GET api/values
@@ -42,16 +43,20 @@ namespace openstigapi.Controllers
             Score cklScore = new Score();
             string checklist = await _cache.GetStringAsync(id.ToString());
             if (!string.IsNullOrEmpty(checklist)) {
+                _logger.LogInformation("/score/{id}: checklist is valid so putting into class to run queries.");
                 Artifact asdSTIGChecklist = JsonConvert.DeserializeObject<Artifact>(checklist);
                 if (asdSTIGChecklist.Checklist == null || asdSTIGChecklist.Checklist.Items == null){
                     // load the checklist
                     asdSTIGChecklist.Checklist = ChecklistLoader.LoadASDChecklist(Directory.GetCurrentDirectory() + 
-                        "\\wwwroot\\data" + asdSTIGChecklist.filePath);
+                        "/wwwroot/data" + asdSTIGChecklist.filePath);
                         // save it to the cache for next time           
+                    _logger.LogInformation("/score/{id}: Pulling in latest checklist file.");
                     _cache.SetString(asdSTIGChecklist.id.ToString(),JsonConvert.SerializeObject(asdSTIGChecklist));
                 }
                 if (asdSTIGChecklist != null && asdSTIGChecklist.Checklist.Items != null && 
                     asdSTIGChecklist.Checklist.Items.Length == 2 && asdSTIGChecklist.Checklist.Items[1] != null) {
+                    _logger.LogInformation("/score/{id}: Scoring the checklist.");
+
                     // now see what score you can get
                     CHECKLISTSTIGS objSTIG = (CHECKLISTSTIGS)asdSTIGChecklist.Checklist.Items[1];
                     CHECKLISTSTIGSISTIG[] iSTIG = objSTIG.iSTIG;
